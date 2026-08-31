@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LedgersUSA Tax Planning Portal — Hi-Fi Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #0f172a;
+    --navy2:  #1e293b;
+    --navy3:  #334155;
+    --slate:  #64748b;
+    --muted:  #94a3b8;
+    --border: #e2e8f0;
+    --bg:     #f8fafc;
+    --white:  #ffffff;
+    --emerald:#10b981;
+    --emerald2:#059669;
+    --emerald-light:#d1fae5;
+    --amber:  #f59e0b;
+    --red:    #ef4444;
+    --purple: #8b5cf6;
+    --blue:   #3b82f6;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--navy);
+    overflow: hidden;
+  }
+
+  /* ── CHROME ── */
+  #chrome {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* top nav */
+  #topnav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    z-index: 100;
+    box-shadow: 0 1px 0 var(--border);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--navy);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--emerald); font-weight: 700; font-size: 14px;
+  }
+  .logo-name { font-weight: 700; font-size: 15px; letter-spacing: -.3px; }
+  .logo-sub  { font-size: 11px; color: var(--slate); margin-top: 1px; }
+
+  .nav-pills { display: flex; gap: 4px; }
+  .nav-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--slate);
+    background: transparent;
+    transition: all .15s;
+  }
+  .nav-pill:hover { background: var(--bg); color: var(--navy); }
+  .nav-pill.active { background: var(--navy); color: var(--white); }
+
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .btn-ghost {
+    padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    background: transparent; color: var(--navy); transition: all .15s;
+  }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-primary {
+    padding: 6px 16px; border-radius: 8px; border: none;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    background: var(--emerald); color: var(--white); transition: all .15s;
+  }
+  .btn-primary:hover { background: var(--emerald2); }
+
+  /* flow progress bar */
+  #flow-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+  .flow-step {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    cursor: pointer; white-space: nowrap; padding: 4px 8px;
+    border-radius: 6px; transition: all .15s;
+  }
+  .flow-step:hover { color: var(--navy); background: var(--bg); }
+  .flow-step.active { color: var(--navy); }
+  .flow-step.done   { color: var(--emerald); }
+  .flow-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    background: var(--border); color: var(--muted);
+    transition: all .2s;
+  }
+  .flow-step.active .flow-dot { background: var(--navy); color: var(--white); }
+  .flow-step.done   .flow-dot { background: var(--emerald); color: var(--white); }
+  .flow-arrow { color: var(--border); font-size: 16px; margin: 0 2px; flex-shrink: 0; }
+
+  /* viewport */
+  #viewport {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    padding: 32px;
+    transition: transform .38s cubic-bezier(.4,0,.2,1), opacity .38s ease;
+    will-change: transform, opacity;
+  }
+  .screen.hidden-left  { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+  .screen.hidden-right { transform: translateX(100%);  opacity: 0; pointer-events: none; }
+  .screen.active       { transform: translateX(0);     opacity: 1; pointer-events: auto; }
+
+  /* ── LAYOUT HELPERS ── */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .cols-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+  .cols-2-1 { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; }
+  .cols-1-2 { display: grid; grid-template-columns: 1fr 1.35fr; gap: 20px; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-header { padding: 20px 24px 0; }
+  .card-body   { padding: 20px 24px; }
+  .card-title  { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .card-sub    { font-size: 13px; color: var(--slate); line-height: 1.5; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; letter-spacing: .3px;
+  }
+  .badge-emerald { background: var(--emerald-light); color: #065f46; }
+  .badge-navy    { background: #dbeafe; color: #1e40af; }
+  .badge-amber   { background: #fef3c7; color: #92400e; }
+  .badge-purple  { background: #ede9fe; color: #5b21b6; }
+  .badge-slate   { background: var(--bg); color: var(--slate); border: 1px solid var(--border); }
+  .badge-red     { background: #fee2e2; color: #991b1b; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 20px; border-radius: 10px; border: none;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all .15s; white-space: nowrap;
+  }
+  .btn-lg { padding: 13px 28px; font-size: 15px; border-radius: 12px; }
+  .btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 8px; }
+  .btn-fill   { background: var(--navy); color: var(--white); }
+  .btn-fill:hover { background: var(--navy2); }
+  .btn-green  { background: var(--emerald); color: var(--white); }
+  .btn-green:hover { background: var(--emerald2); }
+  .btn-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--border); }
+  .btn-outline:hover { background: var(--bg); }
+  .btn-ghost2 { background: transparent; color: var(--slate); border: none; font-weight: 500; }
+  .btn-ghost2:hover { color: var(--navy); }
+
+  /* ── FORM ELEMENTS ── */
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 13px; font-weight: 500; color: var(--navy); }
+  input[type=text], input[type=email], input[type=number], select, textarea {
+    padding: 9px 13px; border-radius: 9px; border: 1.5px solid var(--border);
+    font-size: 14px; font-family: inherit; color: var(--navy);
+    background: var(--white); outline: none; transition: border .15s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--navy); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* checkbox row */
+  .check-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; border-radius: 10px; border: 1.5px solid var(--border);
+    cursor: pointer; transition: border .15s;
+  }
+  .check-row:hover { border-color: var(--navy); }
+  .check-box {
+    width: 18px; height: 18px; border-radius: 5px;
+    border: 2px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; background: var(--white); transition: all .15s;
+  }
+  .check-box.checked { background: var(--navy); border-color: var(--navy); color: var(--white); }
+  .check-label { font-size: 13px; color: var(--navy); }
+
+  /* progress bar */
+  .progress-track {
+    width: 100%; height: 6px; background: var(--border);
+    border-radius: 3px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--emerald);
+    border-radius: 3px; transition: width .4s ease;
+  }
+
+  /* step indicators */
+  .steps-row { display: flex; gap: 8px; align-items: center; margin-bottom: 24px; }
+  .step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    background: var(--border); color: var(--muted);
+  }
+  .step-dot.active { background: var(--navy); color: var(--white); }
+  .step-dot.done   { background: var(--emerald); color: var(--white); }
+  .step-line { flex: 1; height: 2px; background: var(--border); border-radius: 1px; }
+  .step-line.done { background: var(--emerald); }
+
+  /* stat card */
+  .stat {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--slate); margin-top: 4px; }
+
+  /* strategy card */
+  .strat-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px;
+  }
+  .strat-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .strat-name { font-size: 15px; font-weight: 700; }
+  .strat-desc { font-size: 13px; color: var(--slate); line-height: 1.5; }
+  .strat-savings { font-size: 20px; font-weight: 700; color: var(--emerald); }
+  .strat-savings-label { font-size: 11px; color: var(--slate); }
+  .score-bar-track { height: 4px; background: var(--border); border-radius: 2px; }
+  .score-bar-fill  { height: 4px; background: var(--emerald); border-radius: 2px; }
+  .doc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .doc-chip {
+    padding: 3px 9px; border-radius: 6px; border: 1px solid var(--border);
+    font-size: 11px; color: var(--slate);
+  }
+
+  /* tab bar */
+  .tab-bar {
+    display: flex; gap: 2px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 4px; width: fit-content;
+  }
+  .tab {
+    padding: 7px 16px; border-radius: 7px;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    color: var(--slate); transition: all .15s;
+  }
+  .tab.active { background: var(--white); color: var(--navy); box-shadow: var(--shadow); }
+  .tab:hover:not(.active) { color: var(--navy); }
+
+  /* task row */
+  .task-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--white);
+  }
+  .task-num {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    background: var(--bg); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--slate);
+  }
+  .task-num.done { background: var(--emerald); border-color: var(--emerald); color: white; }
+
+  /* table */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th {
+    text-align: left; padding: 10px 14px;
+    background: var(--bg); color: var(--slate); font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+    color: var(--navy); vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #fafafa; }
+
+  /* section header */
+  .section-hd { margin-bottom: 20px; }
+  .section-hd h2 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+  .section-hd p  { font-size: 14px; color: var(--slate); margin-top: 4px; }
+
+  /* hero area */
+  .hero { 
+    background: linear-gradient(135deg, var(--navy) 0%, #1e293b 60%, #0f2a1a 100%);
+    border-radius: 20px; padding: 48px 40px; color: white; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 70% 50%, rgba(16,185,129,.15) 0%, transparent 60%);
+  }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--emerald); margin-bottom: 12px; }
+  .hero h1 { font-size: 38px; font-weight: 700; letter-spacing: -.5px; line-height: 1.15; max-width: 560px; position: relative; }
+  .hero p  { font-size: 16px; color: #94a3b8; margin-top: 14px; max-width: 480px; line-height: 1.6; position: relative; }
+  .hero-btns { display: flex; gap: 12px; margin-top: 28px; position: relative; }
+
+  /* pricing card */
+  .price-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow); transition: transform .15s, box-shadow .15s;
+  }
+  .price-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .price-card.featured { border-color: var(--emerald); border-width: 2px; }
+  .price-amount { font-size: 32px; font-weight: 800; color: var(--navy); }
+  .price-period { font-size: 14px; color: var(--slate); font-weight: 400; }
+  .price-name { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .price-desc { font-size: 13px; color: var(--slate); margin-bottom: 16px; }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--navy); }
+  .feature-list li::before { content: '✓'; color: var(--emerald); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* checkout card */
+  .checkout-box {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    max-width: 480px; margin: 0 auto;
+  }
+  .checkout-header {
+    background: var(--navy); padding: 28px 32px; border-radius: var(--radius) var(--radius) 0 0;
+    color: white;
+  }
+
+  /* split layout for checkout */
+  .checkout-split { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; max-width: 960px; margin: 0 auto; }
+
+  /* notification dot */
+  .notif-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--red); display: inline-block; margin-left: 4px;
+  }
+
+  /* avatar */
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 12px; font-weight: 700;
+  }
+
+  /* disclaimer */
+  .disclaimer {
+    background: #fffbeb; border: 1px solid #fde68a;
+    border-radius: 10px; padding: 12px 16px;
+    font-size: 12px; color: #92400e; line-height: 1.5;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  /* section label */
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+
+  /* review action bar */
+  .action-bar {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  /* empty state */
+  .empty {
+    text-align: center; padding: 40px 20px; color: var(--slate);
+    font-size: 14px;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── TRANSITION ANIMATION ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .screen.active > * { animation: fadeUp .3s ease both; }
+  .screen.active > *:nth-child(1) { animation-delay: .04s; }
+  .screen.active > *:nth-child(2) { animation-delay: .08s; }
+  .screen.active > *:nth-child(3) { animation-delay: .12s; }
+  .screen.active > *:nth-child(4) { animation-delay: .16s; }
+
+  /* intake step panels */
+  .intake-panel { display: none; }
+  .intake-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<div id="chrome">
+
+  <!-- TOP NAV -->
+  <nav id="topnav">
+    <div class="logo">
+      <div class="logo-mark">L</div>
+      <div>
+        <div class="logo-name">LedgersUSA PLLC</div>
+        <div class="logo-sub">Tax Planning Portal</div>
+      </div>
+    </div>
+    <div class="nav-pills">
+      <div class="nav-pill" onclick="goTo(0)">Home</div>
+      <div class="nav-pill" onclick="goTo(1)">Pricing</div>
+      <div class="nav-pill" onclick="goTo(2)">Checkout</div>
+      <div class="nav-pill" onclick="goTo(3)">Intake</div>
+      <div class="nav-pill" onclick="goTo(4)">Results</div>
+      <div class="nav-pill" onclick="goTo(5)">Portal</div>
+      <div class="nav-pill" onclick="goTo(6)">Admin</div>
+    </div>
+    <div class="nav-right">
+      <button class="btn-ghost">Log in</button>
+      <button class="btn-primary" onclick="goTo(2)">Get started →</button>
+    </div>
+  </nav>
+
+  <!-- FLOW PROGRESS BAR -->
+  <div id="flow-bar">
+    <div class="flow-step" onclick="goTo(0)" id="fs-0"><div class="flow-dot">1</div>Marketing</div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step" onclick="goTo(1)" id="fs-1"><div class="flow-dot">2</div>Pricing</div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step" onclick="goTo(2)" id="fs-2"><div class="flow-dot">3</div>Checkout</div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step" onclick="goTo(3)" id="fs-3"><div class="flow-dot">4</div>Intake Wizard</div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step" onclick="goTo(4)" id="fs-4"><div class="flow-dot">5</div>Results</div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step" onclick="goTo(5)" id="fs-5"><div class="flow-dot">6</div>Client Portal</div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step" onclick="goTo(6)" id="fs-6"><div class="flow-dot">7</div>Admin Review</div>
+  </div>
+
+  <!-- VIEWPORT -->
+  <div id="viewport">
+
+    <!-- ══════════════════════════════════════════
+         SCREEN 0 — MARKETING / LANDING
+    ══════════════════════════════════════════ -->
+    <div class="screen active" id="screen-0">
+      <!-- Hero -->
+      <div class="hero" style="margin-bottom:24px;">
+        <div class="hero-eyebrow">Tax Planning Platform</div>
+        <h1>Stop overpaying.<br/>Start planning.</h1>
+        <p>LedgersUSA's diagnostic portal identifies the tax strategies your business qualifies for — then delivers a CPA-reviewed implementation plan with every template and calculator you need.</p>
+        <div class="hero-btns">
+          <button class="btn btn-green btn-lg" onclick="goTo(1)">See pricing &amp; get started →</button>
+          <button class="btn btn-outline btn-lg" style="color:white;border-color:rgba(255,255,255,.25);" onclick="goTo(5)">Preview client portal</button>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="cols-3" style="margin-bottom:24px;">
+        <div class="card">
+          <div class="card-body" style="text-align:center;padding:28px 20px;">
+            <div style="font-size:32px;margin-bottom:12px;">🔍</div>
+            <div style="font-weight:700;margin-bottom:6px;">Step 1 — Diagnostic</div>
+            <div style="font-size:13px;color:var(--slate);line-height:1.5;">Complete a guided intake. Our engine scores your eligibility for 10+ tax strategies.</div>
+            <div style="margin-top:14px;"><span class="badge badge-emerald">$297 – $497</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="text-align:center;padding:28px 20px;">
+            <div style="font-size:32px;margin-bottom:12px;">🛡️</div>
+            <div style="font-weight:700;margin-bottom:6px;">Step 2 — CPA Review</div>
+            <div style="font-size:13px;color:var(--slate);line-height:1.5;">Upgrade to a LedgersUSA-reviewed plan. Our CPAs validate every strategy, assumption, and savings estimate.</div>
+            <div style="margin-top:14px;"><span class="badge badge-navy">From $1,500</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="text-align:center;padding:28px 20px;">
+            <div style="font-size:32px;margin-bottom:12px;">🗂️</div>
+            <div style="font-weight:700;margin-bottom:6px;">Step 3 — Implement</div>
+            <div style="font-size:13px;color:var(--slate);line-height:1.5;">Access templates, calculators, and specialist connections to put your plan into action.</div>
+            <div style="margin-top:14px;"><span class="badge badge-purple">Full toolkit</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strategies preview -->
+      <div style="margin-bottom:20px;">
+        <div class="section-hd">
+          <h2>Strategies we help implement</h2>
+          <p>Each strategy is scored for your specific entity, income level, and situation.</p>
+        </div>
+        <div class="cols-3">
+          <div class="strat-card">
+            <div class="strat-header"><div><div class="strat-name">Augusta Rule</div><div class="strat-desc">Rent your home to your business tax-free up to 14 days per year.</div></div><span class="badge badge-emerald">§280A</span></div>
+            <div class="strat-savings">$8,400 – $22,000<div class="strat-savings-label">estimated annual savings</div></div>
+          </div>
+          <div class="strat-card">
+            <div class="strat-header"><div><div class="strat-name">S-Corp Optimization</div><div class="strat-desc">Reduce self-employment taxes through entity election and salary strategy.</div></div><span class="badge badge-navy">Entity</span></div>
+            <div class="strat-savings">$12,000 – $35,000<div class="strat-savings-label">estimated annual savings</div></div>
+          </div>
+          <div class="strat-card">
+            <div class="strat-header"><div><div class="strat-name">Accountable Plan</div><div class="strat-desc">Reimburse business expenses without creating taxable wages.</div></div><span class="badge badge-purple">Reimbursement</span></div>
+            <div class="strat-savings">$4,200 – $14,000<div class="strat-savings-label">estimated annual savings</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <span>⚠️</span>
+        <span>Savings estimates are preliminary and educational. All figures are subject to professional review, individual facts, and applicable tax law. LedgersUSA's reviewed plans constitute the basis for actionable advice.</span>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         SCREEN 1 — PRICING
+    ══════════════════════════════════════════ -->
+    <div class="screen hidden-right" id="screen-1">
+      <div class="section-hd" style="text-align:center;max-width:560px;margin:0 auto 32px;">
+        <h2>Simple, transparent pricing</h2>
+        <p>Start with a paid diagnostic. Upgrade to a reviewed plan when you're ready to implement.</p>
+      </div>
+
+      <!-- Diagnostic -->
+      <div style="max-width:900px;margin:0 auto 32px;">
+        <div class="section-label">Diagnostic</div>
+        <div class="cols-2">
+          <div class="price-card featured">
+            <div class="badge badge-emerald" style="margin-bottom:14px;">Most popular</div>
+            <div class="price-name">Tax Planning Diagnostic</div>
+            <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">
+              <div class="price-amount">$497</div>
+              <div class="price-period">one-time</div>
+            </div>
+            <div class="price-desc">Complete the guided intake and receive your personalized strategy package within minutes.</div>
+            <ul class="feature-list" style="margin-bottom:20px;">
+              <li>6-section guided intake wizard</li>
+              <li>Strategy scoring across 10+ strategies</li>
+              <li>Preliminary savings estimates</li>
+              <li>Starter resource library access</li>
+              <li>Client portal dashboard</li>
+            </ul>
+            <button class="btn btn-green" style="width:100%;" onclick="goTo(2)">Start diagnostic →</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="card-body">
+                <div style="font-size:13px;font-weight:600;margin-bottom:8px;">What happens after checkout</div>
+                <div class="stack" style="gap:10px;">
+                  <div class="task-row" style="padding:10px 12px;">
+                    <div class="task-num done">✓</div><div style="font-size:13px;">Payment confirmed via Stripe</div>
+                  </div>
+                  <div class="task-row" style="padding:10px 12px;">
+                    <div class="task-num done">✓</div><div style="font-size:13px;">Intake wizard unlocked</div>
+                  </div>
+                  <div class="task-row" style="padding:10px 12px;">
+                    <div class="task-num done">✓</div><div style="font-size:13px;">Strategy package generated</div>
+                  </div>
+                  <div class="task-row" style="padding:10px 12px;">
+                    <div class="task-num done">✓</div><div style="font-size:13px;">Portal access granted</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviewed Plans -->
+      <div style="max-width:900px;margin:0 auto;">
+        <div class="section-label">Reviewed Plans — upgrade after diagnostic</div>
+        <div class="cols-3">
+          <div class="price-card">
+            <div class="price-name">Starter</div>
+            <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;"><div class="price-amount" style="font-size:26px;">$1,500</div></div>
+            <div class="price-desc">1–2 strategies. Ideal for solo operators getting started.</div>
+            <ul class="feature-list">
+              <li>CPA-reviewed strategy memo</li>
+              <li>Implementation templates</li>
+              <li>1 specialist referral</li>
+            </ul>
+          </div>
+          <div class="price-card featured">
+            <div class="badge badge-emerald" style="margin-bottom:10px;">Recommended</div>
+            <div class="price-name">Core</div>
+            <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;"><div class="price-amount" style="font-size:26px;">$2,500</div><div class="price-period">– $3,500</div></div>
+            <div class="price-desc">3–5 strategies. Full implementation plan with all resources.</div>
+            <ul class="feature-list">
+              <li>All Starter features</li>
+              <li>Full document library</li>
+              <li>Calculators &amp; checklists</li>
+              <li>Task tracking portal</li>
+              <li>Unlimited specialist referrals</li>
+            </ul>
+          </div>
+          <div class="price-card">
+            <div class="price-name">Premium / VFO</div>
+            <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;"><div class="price-amount" style="font-size:26px;">$7,500+</div></div>
+            <div class="price-desc">Complex, multi-entity or high-income situations.</div>
+            <ul class="feature-list">
+              <li>All Core features</li>
+              <li>Multi-entity strategy</li>
+              <li>Estate planning coordination</li>
+              <li>Ongoing planning support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         SCREEN 2 — CHECKOUT
+    ══════════════════════════════════════════ -->
+    <div class="screen hidden-right" id="screen-2">
+      <div class="checkout-split">
+        <!-- Left: order summary -->
+        <div class="stack">
+          <div class="section-hd">
+            <h2>Tax Planning Diagnostic</h2>
+            <p>One-time payment — instant access after confirmation.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="section-label">Order summary</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <div>
+                  <div style="font-weight:600;font-size:15px;">Tax Planning Diagnostic</div>
+                  <div style="font-size:13px;color:var(--slate);">Full intake + strategy scoring + portal access</div>
+                </div>
+                <div style="font-size:20px;font-weight:700;">$497</div>
+              </div>
+              <div class="divider"></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--slate);margin-bottom:8px;"><span>Subtotal</span><span>$497.00</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--slate);margin-bottom:14px;"><span>Tax</span><span>$0.00</span></div>
+              <div class="divider"></div>
+              <div style="display:flex;justify-content:space-between;font-weight:700;font-size:16px;"><span>Total due today</span><span>$497.00</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="section-label">What's included</div>
+              <ul class="feature-list">
+                <li>Guided 6-section intake wizard</li>
+                <li>Deterministic strategy scoring engine</li>
+                <li>Preliminary savings estimates across 10+ strategies</li>
+                <li>Access to starter resource library</li>
+                <li>Secure client portal dashboard</li>
+                <li>Option to upgrade to CPA-reviewed plan</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="disclaimer">
+            <span>🔒</span>
+            <span>Payments are processed securely by Stripe. LedgersUSA does not store card details. Preliminary strategy output is educational and subject to professional review.</span>
+          </div>
+        </div>
+
+        <!-- Right: payment form -->
+        <div class="card">
+          <div class="card-body" style="padding:28px;">
+            <div class="section-label" style="margin-bottom:16px;">Create your account &amp; pay</div>
+            <div class="stack" style="gap:14px;">
+              <div class="cols-2" style="gap:12px;">
+                <div class="form-group"><label>First name</label><input type="text" placeholder="Sarah" value="Sarah" /></div>
+                <div class="form-group"><label>Last name</label><input type="text" placeholder="Mitchell" value="Mitchell" /></div>
+              </div>
+              <div class="form-group"><label>Email address</label><input type="email" placeholder="sarah@company.com" value="sarah@acmedesign.co" /></div>
+              <div class="form-group"><label>Phone (optional)</label><input type="text" placeholder="+1 (555) 000-0000" /></div>
+
+              <div class="divider" style="margin:4px 0;"></div>
+              <div class="section-label">Card details</div>
+
+              <div class="form-group">
+                <label>Card number</label>
+                <input type="text" placeholder="•••• •••• •••• ••••" value="4242 4242 4242 4242" />
+              </div>
+              <div class="cols-2" style="gap:12px;">
+                <div class="form-group"><label>Expiry</label><input type="text" placeholder="MM / YY" value="12 / 27" /></div>
+                <div class="form-group"><label>CVC</label><input type="text" placeholder="•••" value="•••" /></div>
+              </div>
+              <div class="form-group"><label>Name on card</label><input type="text" placeholder="Sarah Mitchell" value="Sarah Mitchell" /></div>
+
+              <div class="check-row" onclick="toggleCheck(this)">
+                <div class="check-box checked">✓</div>
+                <span class="check-label" style="font-size:12px;">I agree to the Terms of Service and acknowledge that preliminary strategy output is educational and subject to professional review.</span>
+              </div>
+
+              <button class="btn btn-green" style="width:100%;justify-content:center;padding:13px;" onclick="goTo(3)">
+                🔒 Pay $497 and start intake
+              </button>
+              <div style="text-align:center;font-size:12px;color:var(--muted);">Powered by Stripe · SSL encrypted · No card data stored</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         SCREEN 3 — INTAKE WIZARD
+    ══════════════════════════════════════════ -->
+    <div class="screen hidden-right" id="screen-3">
+      <div style="max-width:900px;margin:0 auto;">
+        <div class="section-hd">
+          <h2>Tax Planning Intake</h2>
+          <p>Complete all sections so we can score your strategy eligibility. Takes about 8 minutes.</p>
+        </div>
+
+        <!-- Step indicators -->
+        <div class="steps-row" id="intake-steps">
+          <div class="step-dot done" id="sdot-1">✓</div>
+          <div class="step-line done" id="sline-1"></div>
+          <div class="step-dot active" id="sdot-2">2</div>
+          <div class="step-line" id="sline-2"></div>
+          <div class="step-dot" id="sdot-3">3</div>
+          <div class="step-line" id="sline-3"></div>
+          <div class="step-dot" id="sdot-4">4</div>
+        </div>
+
+        <!-- Step labels -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;">
+          <div style="font-size:12px;color:var(--emerald);font-weight:600;">Personal Profile</div>
+          <div style="font-size:12px;color:var(--navy);font-weight:600;text-align:center;">Income &amp; Business</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;">Tax Qualifiers</div>
+          <div style="font-size:12px;color:var(--muted);text-align:right;">Goals &amp; Submit</div>
+        </div>
+
+        <div class="progress-track" style="margin-bottom:24px;"><div class="progress-fill" id="intake-progress" style="width:50%;"></div></div>
+
+        <!-- Panel 1: Personal (shown as done) -->
+        <div class="intake-panel" id="ip-1">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-body">
+              <div class="section-label">Section 1 — Personal Profile</div>
+              <div class="cols-2" style="gap:14px;">
+                <div class="form-group"><label>First name</label><input type="text" value="Sarah" /></div>
+                <div class="form-group"><label>Last name</label><input type="text" value="Mitchell" /></div>
+                <div class="form-group"><label>Email</label><input type="email" value="sarah@acmedesign.co" /></div>
+                <div class="form-group"><label>Phone</label><input type="text" value="(602) 555-0182" /></div>
+                <div class="form-group"><label>State of residence</label><select><option>Arizona</option></select></div>
+                <div class="form-group"><label>Marital status</label><select><option>Married</option></select></div>
+                <div class="form-group"><label>Tax filing status</label><select><option>Married Filing Jointly</option></select></div>
+                <div class="form-group"><label>Dependents</label><input type="number" value="2" /></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;">
+            <button class="btn btn-fill" onclick="setIntakeStep(2)">Next: Income &amp; Business →</button>
+          </div>
+        </div>
+
+        <!-- Panel 2: Income & Business (active) -->
+        <div class="intake-panel active" id="ip-2">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-body">
+              <div class="section-label">Section 2 — Income Profile</div>
+              <div class="cols-2" style="gap:14px;margin-bottom:20px;">
+                <div class="form-group"><label>W-2 income</label><input type="text" placeholder="$0" /></div>
+                <div class="form-group"><label>Business income (net)</label><input type="text" value="$320,000" /></div>
+                <div class="form-group"><label>K-1 / partnership income</label><input type="text" placeholder="$0" /></div>
+                <div class="form-group"><label>Investment income</label><input type="text" value="$14,500" /></div>
+                <div class="form-group"><label>Rental income</label><input type="text" placeholder="$0" /></div>
+                <div class="form-group"><label>Est. marginal tax bracket</label><select><option>35%</option><option selected>37%</option></select></div>
+              </div>
+              <div class="divider"></div>
+              <div class="section-label" style="margin-top:16px;">Section 3 — Business Profile</div>
+              <div class="cols-2" style="gap:14px;">
+                <div class="form-group"><label>Business owner?</label><select><option>Yes</option></select></div>
+                <div class="form-group"><label>Entity structure</label><select><option>S-Corporation</option></select></div>
+                <div class="form-group"><label>Annual business revenue</label><input type="text" value="$580,000" /></div>
+                <div class="form-group"><label>Annual business profit</label><input type="text" value="$320,000" /></div>
+                <div class="form-group"><label>Number of employees</label><input type="number" value="3" /></div>
+                <div class="form-group"><label>Bookkeeping status</label><select><option>Current and organized</option></select></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:10px;">
+            <button class="btn btn-outline" onclick="setIntakeStep(1)">← Back</button>
+            <button class="btn btn-fill" onclick="setIntakeStep(3)">Next: Tax Qualifiers →</button>
+          </div>
+        </div>
+
+        <!-- Panel 3: Tax Qualifiers -->
+        <div class="intake-panel" id="ip-3">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-body">
+              <div class="section-label">Section 4 — Tax Planning Qualifiers</div>
+              <div class="stack" style="gap:10px;margin-bottom:20px;">
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box checked">✓</div><span class="check-label">Do you use your home for business meetings?</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box checked">✓</div><span class="check-label">Do you have a home office?</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Do your children work in the business?</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box checked">✓</div><span class="check-label">Do you use a vehicle for business?</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Do you have a retirement plan in place?</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box checked">✓</div><span class="check-label">Do you own real estate?</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Do you make charitable contributions?</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="section-label" style="margin-top:16px;">Section 5 — Goals &amp; Priorities</div>
+              <div class="cols-2" style="gap:10px;margin-top:10px;">
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box checked">✓</div><span class="check-label">Reduce current-year taxes</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box checked">✓</div><span class="check-label">Improve cash flow</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box checked">✓</div><span class="check-label">Build retirement savings</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Charitable planning</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Estate planning coordination</span></div>
+                <div class="check-row" onclick="toggleCheck(this)"><div class="check-box checked">✓</div><span class="check-label">Wealth building</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:10px;">
+            <button class="btn btn-outline" onclick="setIntakeStep(2)">← Back</button>
+            <button class="btn btn-fill" onclick="setIntakeStep(4)">Next: Review &amp; Submit →</button>
+          </div>
+        </div>
+
+        <!-- Panel 4: Review & Submit -->
+        <div class="intake-panel" id="ip-4">
+          <div class="cols-2-1" style="gap:16px;">
+            <div class="card">
+              <div class="card-body">
+                <div class="section-label">Intake summary</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;font-size:13px;">
+                  <div><span style="color:var(--muted);">Name</span><br/><strong>Sarah Mitchell</strong></div>
+                  <div><span style="color:var(--muted);">Filing status</span><br/><strong>MFJ</strong></div>
+                  <div><span style="color:var(--muted);">Entity</span><br/><strong>S-Corporation</strong></div>
+                  <div><span style="color:var(--muted);">Revenue</span><br/><strong>$580,000</strong></div>
+                  <div><span style="color:var(--muted);">Net income</span><br/><strong>$320,000</strong></div>
+                  <div><span style="color:var(--muted);">Tax bracket</span><br/><strong>37%</strong></div>
+                  <div><span style="color:var(--muted);">Employees</span><br/><strong>3</strong></div>
+                  <div><span style="color:var(--muted);">State</span><br/><strong>Arizona</strong></div>
+                </div>
+                <div class="divider"></div>
+                <div class="section-label">Qualifiers flagged</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                  <span class="badge badge-emerald">Home office</span>
+                  <span class="badge badge-emerald">Business vehicle</span>
+                  <span class="badge badge-emerald">Home meetings</span>
+                  <span class="badge badge-emerald">Real estate owned</span>
+                </div>
+                <div class="divider"></div>
+                <div class="section-label">Goals selected</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                  <span class="badge badge-navy">Reduce taxes</span>
+                  <span class="badge badge-navy">Improve cash flow</span>
+                  <span class="badge badge-navy">Retirement savings</span>
+                  <span class="badge badge-navy">Wealth building</span>
+                </div>
+              </div>
+            </div>
+            <div class="stack">
+              <div class="card">
+                <div class="card-body">
+                  <div class="section-label">Optional: Upload documents</div>
+                  <div style="border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;font-size:13px;color:var(--muted);">
+                    Drag &amp; drop files here<br/>or <span style="color:var(--blue);cursor:pointer;">browse</span><br/><span style="font-size:11px;margin-top:4px;display:block;">Prior year return · Current financials</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--muted);margin-top:8px;">Documents accelerate your CPA review. Skip for now if needed.</div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <div class="disclaimer" style="margin-bottom:14px;">
+                    <span>⚠️</span><span>Submission generates preliminary, educational strategy recommendations. Results are subject to CPA review and do not constitute tax advice.</span>
+                  </div>
+                  <button class="btn btn-green" style="width:100%;justify-content:center;" onclick="goTo(4)">
+                    Submit intake &amp; generate results →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-start;gap:10px;margin-top:16px;">
+            <button class="btn btn-outline" onclick="setIntakeStep(3)">← Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         SCREEN 4 — PRELIMINARY RESULTS
+    ══════════════════════════════════════════ -->
+    <div class="screen hidden-right" id="screen-4">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,#0f172a,#064e3b);border-radius:16px;padding:28px 32px;color:white;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--emerald);margin-bottom:8px;">Preliminary Strategy Package</div>
+          <div style="font-size:26px;font-weight:700;margin-bottom:6px;">Sarah, we found 5 qualifying strategies.</div>
+          <div style="font-size:14px;color:#94a3b8;">Based on your S-Corp, $320K income, 37% bracket — Arizona</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px;color:#94a3b8;letter-spacing:.5px;">ESTIMATED SAVINGS RANGE</div>
+          <div style="font-size:44px;font-weight:800;color:var(--emerald);line-height:1;">$47K–$89K</div>
+          <div style="font-size:11px;color:#94a3b8;">per year · preliminary · subject to review</div>
+        </div>
+      </div>
+
+      <div class="disclaimer" style="margin-bottom:24px;">
+        <span>ℹ️</span>
+        <span>These are <strong>preliminary, educational</strong> strategy insights generated by our rules engine. Savings ranges are estimates based on your inputs and are not guaranteed. All figures are subject to LedgersUSA CPA review before implementation.</span>
+      </div>
+
+      <!-- Strategy results grid -->
+      <div class="cols-2-1" style="margin-bottom:24px;">
+        <div class="stack">
+          <div class="section-label">Your matched strategies — sorted by fit score</div>
+
+          <!-- Strategy 1 -->
+          <div class="strat-card">
+            <div class="strat-header">
+              <div><div class="strat-name">Augusta Rule</div><div class="strat-desc">Rent your home to your S-Corp for qualifying business meetings — up to 14 days tax-free per year.</div></div>
+              <span class="badge badge-emerald">92/100</span>
+            </div>
+            <div style="display:flex;gap:24px;align-items:flex-end;">
+              <div><div class="strat-savings">$14,400 – $28,000</div><div class="strat-savings-label">estimated annual savings</div></div>
+              <div style="flex:1;"><div class="score-bar-track"><div class="score-bar-fill" style="width:92%;"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;">Fit score 92 / 100</div></div>
+            </div>
+            <div class="doc-chips"><span class="doc-chip">Board Resolution</span><span class="doc-chip">Rental Agreement</span><span class="doc-chip">Market Rent Analyzer</span><span class="doc-chip">Event Log</span></div>
+            <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="goTo(5)">View in portal</button><button class="btn btn-ghost2 btn-sm">Learn more</button></div>
+          </div>
+
+          <!-- Strategy 2 -->
+          <div class="strat-card">
+            <div class="strat-header">
+              <div><div class="strat-name">Accountable Plan</div><div class="strat-desc">Reimburse valid business expenses through a formal policy — no payroll taxes on reimbursements.</div></div>
+              <span class="badge badge-emerald">88/100</span>
+            </div>
+            <div style="display:flex;gap:24px;align-items:flex-end;">
+              <div><div class="strat-savings">$8,200 – $18,500</div><div class="strat-savings-label">estimated annual savings</div></div>
+              <div style="flex:1;"><div class="score-bar-track"><div class="score-bar-fill" style="width:88%;"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;">Fit score 88 / 100</div></div>
+            </div>
+            <div class="doc-chips"><span class="doc-chip">Plan Policy</span><span class="doc-chip">Board Resolution</span><span class="doc-chip">Reimbursement Form</span><span class="doc-chip">Home Office Calculator</span></div>
+            <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="goTo(5)">View in portal</button><button class="btn btn-ghost2 btn-sm">Learn more</button></div>
+          </div>
+
+          <!-- Strategy 3 -->
+          <div class="strat-card">
+            <div class="strat-header">
+              <div><div class="strat-name">Vehicle Strategy</div><div class="strat-desc">Section 179 and bonus depreciation for qualifying business vehicles used primarily for work.</div></div>
+              <span class="badge badge-navy">81/100</span>
+            </div>
+            <div style="display:flex;gap:24px;align-items:flex-end;">
+              <div><div class="strat-savings">$9,800 – $22,000</div><div class="strat-savings-label">estimated annual savings</div></div>
+              <div style="flex:1;"><div class="score-bar-track"><div class="score-bar-fill" style="width:81%;background:var(--blue);"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;">Fit score 81 / 100</div></div>
+            </div>
+            <div class="doc-chips"><span class="doc-chip">Vehicle Calculator</span><span class="doc-chip">Business Use Log</span><span class="doc-chip">Compliance Memo</span></div>
+            <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="goTo(5)">View in portal</button><button class="btn btn-ghost2 btn-sm">Learn more</button></div>
+          </div>
+
+          <!-- Strategy 4 -->
+          <div class="strat-card">
+            <div class="strat-header">
+              <div><div class="strat-name">Retirement Optimization</div><div class="strat-desc">Maximize Solo 401(k) contributions aligned to your S-Corp salary and profit level.</div></div>
+              <span class="badge badge-navy">78/100</span>
+            </div>
+            <div style="display:flex;gap:24px;align-items:flex-end;">
+              <div><div class="strat-savings">$8,900 – $14,200</div><div class="strat-savings-label">estimated annual savings</div></div>
+              <div style="flex:1;"><div class="score-bar-track"><div class="score-bar-fill" style="width:78%;background:var(--blue);"></div></div></div>
+            </div>
+            <div class="doc-chips"><span class="doc-chip">Contribution Calculator</span><span class="doc-chip">Plan Comparison</span></div>
+            <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="goTo(5)">View in portal</button></div>
+          </div>
+        </div>
+
+        <!-- Right sidebar -->
+        <div class="stack">
+          <div class="card">
+            <div class="card-body">
+              <div class="section-label">Upgrade to reviewed plan</div>
+              <div style="font-size:22px;font-weight:800;color:var(--emerald);margin-bottom:4px;">$47K–$89K</div>
+              <div style="font-size:12px;color:var(--slate);margin-bottom:16px;">estimated savings available — pending CPA review</div>
+              <div style="font-size:13px;color:var(--slate);line-height:1.6;margin-bottom:16px;">A LedgersUSA CPA will validate every strategy, refine assumptions, and deliver a vetted implementation plan with all templates and calculators.</div>
+              <button class="btn btn-green" style="width:100%;justify-content:center;" onclick="goTo(5)">
+                Upgrade to Core Plan — $2,500 →
+              </button>
+              <div class="divider"></div>
+              <ul class="feature-list" style="font-size:12px;">
+                <li>CPA-reviewed strategy memo</li>
+                <li>Full implementation document library</li>
+                <li>Calculators &amp; checklists</li>
+                <li>Task tracking portal</li>
+                <li>Specialist provider referrals</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="section-label">Scoring breakdown</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+                <div style="display:flex;justify-content:space-between;"><span>Eligibility</span><span style="font-weight:600;color:var(--emerald);">High</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Income suitability</span><span style="font-weight:600;color:var(--emerald);">Very High</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Entity fit</span><span style="font-weight:600;color:var(--emerald);">Strong (S-Corp)</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Implementation readiness</span><span style="font-weight:600;color:var(--amber);">Moderate</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Value potential</span><span style="font-weight:600;color:var(--emerald);">High</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="section-label">Engine info</div>
+              <div style="font-size:12px;color:var(--slate);line-height:1.6;">
+                Rules engine v1.0.0 · Schema v1.0<br/>
+                Evaluated: 10 strategies<br/>
+                Matched: 5 strategies<br/>
+                Generated: just now
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         SCREEN 5 — CLIENT PORTAL
+    ══════════════════════════════════════════ -->
+    <div class="screen hidden-right" id="screen-5">
+      <!-- Portal header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div>
+          <div style="font-size:20px;font-weight:700;">Welcome back, Sarah 👋</div>
+          <div style="font-size:13px;color:var(--slate);">Core Plan · Under CPA Review · S-Corporation · Arizona</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge badge-amber">Under Review</span>
+          <div class="avatar">SM</div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="cols-4" style="margin-bottom:20px;">
+        <div class="stat"><div class="stat-value" style="color:var(--emerald);">$47K–89K</div><div class="stat-label">Estimated savings range</div></div>
+        <div class="stat"><div class="stat-value">5</div><div class="stat-label">Strategies matched</div></div>
+        <div class="stat"><div class="stat-value">3/6</div><div class="stat-label">Tasks completed</div></div>
+        <div class="stat"><div class="stat-value" style="color:var(--amber);">In Review</div><div class="stat-label">Plan status</div></div>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="tab-bar" style="margin-bottom:20px;" id="portal-tabs">
+        <div class="tab active" onclick="setPortalTab('dashboard',this)">Dashboard</div>
+        <div class="tab" onclick="setPortalTab('strategies',this)">Strategies</div>
+        <div class="tab" onclick="setPortalTab('tasks',this)">Tasks</div>
+        <div class="tab" onclick="setPortalTab('documents',this)">Documents</div>
+        <div class="tab" onclick="setPortalTab('experts',this)">Experts</div>
+      </div>
+
+      <!-- Dashboard tab -->
+      <div id="ptab-dashboard">
+        <div class="cols-2-1">
+          <div class="stack">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Your strategy package</div><div class="card-sub">5 strategies · Preliminary — CPA review in progress</div></div>
+              <div class="card-body">
+                <div class="stack" style="gap:10px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;border:1px solid var(--border);">
+                    <div><div style="font-weight:600;font-size:13px;">Augusta Rule</div><div style="font-size:12px;color:var(--slate);">$14,400–$28,000 est. savings</div></div>
+                    <span class="badge badge-amber">Under Review</span>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;border:1px solid var(--border);">
+                    <div><div style="font-weight:600;font-size:13px;">Accountable Plan</div><div style="font-size:12px;color:var(--slate);">$8,200–$18,500 est. savings</div></div>
+                    <span class="badge badge-amber">Under Review</span>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;border:1px solid var(--border);">
+                    <div><div style="font-weight:600;font-size:13px;">Vehicle Strategy</div><div style="font-size:12px;color:var(--slate);">$9,800–$22,000 est. savings</div></div>
+                    <span class="badge badge-amber">Under Review</span>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;border:1px solid var(--border);">
+                    <div><div style="font-weight:600;font-size:13px;">Retirement Optimization</div><div style="font-size:12px;color:var(--slate);">$8,900–$14,200 est. savings</div></div>
+                    <span class="badge badge-amber">Under Review</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Implementation progress</div></div>
+              <div class="card-body">
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;"><span>Tasks completed</span><span style="font-weight:600;">3 of 6</span></div>
+                <div class="progress-track"><div class="progress-fill" style="width:50%;"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="card">
+              <div class="card-body">
+                <div class="section-label">Review status</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div class="task-row" style="padding:10px 12px;"><div class="task-num done">✓</div><div style="font-size:13px;">Payment confirmed</div></div>
+                  <div class="task-row" style="padding:10px 12px;"><div class="task-num done">✓</div><div style="font-size:13px;">Intake submitted</div></div>
+                  <div class="task-row" style="padding:10px 12px;"><div class="task-num done">✓</div><div style="font-size:13px;">Assigned to reviewer</div></div>
+                  <div class="task-row" style="padding:10px 12px;background:#fffbeb;border-color:#fde68a;"><div class="task-num" style="background:var(--amber);border-color:var(--amber);color:white;">→</div><div style="font-size:13px;"><strong>CPA review in progress</strong><div style="font-size:11px;color:var(--slate);">Est. completion: 3–5 business days</div></div></div>
+                  <div class="task-row" style="padding:10px 12px;opacity:.5;"><div class="task-num">5</div><div style="font-size:13px;">Plan approved &amp; released</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <div class="section-label">Notifications</div>
+                <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+                  <div style="padding:10px;border-radius:8px;background:#eff6ff;border:1px solid #bfdbfe;"><strong>Reviewer assigned</strong><br/><span style="color:var(--slate);font-size:12px;">Your case has been assigned to a LedgersUSA CPA.</span></div>
+                  <div style="padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);"><span style="color:var(--muted);">Please upload your prior-year tax return to accelerate review.</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strategies tab (hidden) -->
+      <div id="ptab-strategies" style="display:none;">
+        <div class="cols-3">
+          <div class="strat-card"><div class="strat-header"><div><div class="strat-name">Augusta Rule</div><div class="strat-desc">Home meeting rental strategy.</div></div><span class="badge badge-amber">Under Review</span></div><div class="strat-savings">$14,400–$28,000</div></div>
+          <div class="strat-card"><div class="strat-header"><div><div class="strat-name">Accountable Plan</div><div class="strat-desc">Expense reimbursement policy.</div></div><span class="badge badge-amber">Under Review</span></div><div class="strat-savings">$8,200–$18,500</div></div>
+          <div class="strat-card"><div class="strat-header"><div><div class="strat-name">Vehicle Strategy</div><div class="strat-desc">Section 179 &amp; bonus depreciation.</div></div><span class="badge badge-amber">Under Review</span></div><div class="strat-savings">$9,800–$22,000</div></div>
+          <div class="strat-card"><div class="strat-header"><div><div class="strat-name">Retirement Optimization</div><div class="strat-desc">Solo 401(k) maximization.</div></div><span class="badge badge-amber">Under Review</span></div><div class="strat-savings">$8,900–$14,200</div></div>
+          <div class="strat-card" style="opacity:.55;"><div class="strat-header"><div><div class="strat-name">SALT PTE Election</div><div class="strat-desc">State pass-through entity tax election.</div></div><span class="badge badge-slate">Not matched</span></div><div class="strat-savings" style="color:var(--muted);">—</div></div>
+        </div>
+      </div>
+
+      <!-- Tasks tab (hidden) -->
+      <div id="ptab-tasks" style="display:none;">
+        <div class="card" style="max-width:640px;">
+          <div class="card-body">
+            <div class="section-label">Implementation tasks</div>
+            <div class="stack" style="gap:8px;">
+              <div class="task-row"><div class="task-num done">✓</div><div><div style="font-size:13px;font-weight:500;">Sign engagement agreement</div><div style="font-size:12px;color:var(--slate);">Completed Aug 12</div></div></div>
+              <div class="task-row"><div class="task-num done">✓</div><div><div style="font-size:13px;font-weight:500;">Pay planning fee</div><div style="font-size:12px;color:var(--slate);">Completed Aug 12 · $2,500</div></div></div>
+              <div class="task-row"><div class="task-num done">✓</div><div><div style="font-size:13px;font-weight:500;">Upload prior-year tax return</div><div style="font-size:12px;color:var(--slate);">Completed Aug 13</div></div></div>
+              <div class="task-row" style="background:#fffbeb;border-color:#fde68a;"><div class="task-num" style="background:var(--amber);border-color:var(--amber);color:white;">4</div><div><div style="font-size:13px;font-weight:600;">Await CPA review &amp; plan release</div><div style="font-size:12px;color:var(--slate);">In progress · Est. 3–5 days</div></div></div>
+              <div class="task-row" style="opacity:.5;"><div class="task-num">5</div><div><div style="font-size:13px;">Review vetted strategy memo</div></div></div>
+              <div class="task-row" style="opacity:.5;"><div class="task-num">6</div><div><div style="font-size:13px;">Download templates &amp; calculators</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents tab (hidden) -->
+      <div id="ptab-documents" style="display:none;">
+        <div class="card">
+          <div class="card-body">
+            <div class="section-label">Documents</div>
+            <table class="data-table">
+              <thead><tr><th>Document</th><th>Type</th><th>Uploaded</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:500;">2023 Tax Return (Form 1120S)</td><td><span class="badge badge-slate">Return</span></td><td style="color:var(--slate);">Aug 13, 2026</td><td><span class="badge badge-emerald">Received</span></td><td><button class="btn btn-outline btn-sm">Download</button></td></tr>
+                <tr><td style="font-weight:500;">Engagement Agreement</td><td><span class="badge badge-slate">Agreement</span></td><td style="color:var(--slate);">Aug 12, 2026</td><td><span class="badge badge-emerald">Signed</span></td><td><button class="btn btn-outline btn-sm">Download</button></td></tr>
+                <tr><td style="font-weight:500;color:var(--muted);">Reviewed Strategy Memo</td><td><span class="badge badge-slate">Plan</span></td><td style="color:var(--muted);">—</td><td><span class="badge badge-amber">Pending</span></td><td><button class="btn btn-outline btn-sm" disabled style="opacity:.4;">Locked</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experts tab (hidden) -->
+      <div id="ptab-experts" style="display:none;">
+        <div class="cols-4">
+          <div class="card"><div class="card-body"><div style="font-size:24px;margin-bottom:10px;">💼</div><div style="font-weight:700;font-size:14px;">Payroll Specialist</div><div style="font-size:12px;color:var(--slate);margin-top:4px;">Reasonable comp setup, officer payroll, S-Corp wages.</div><button class="btn btn-outline btn-sm" style="margin-top:12px;width:100%;">View provider</button></div></div>
+          <div class="card"><div class="card-body"><div style="font-size:24px;margin-bottom:10px;">📚</div><div style="font-weight:700;font-size:14px;">Bookkeeping Expert</div><div style="font-size:12px;color:var(--slate);margin-top:4px;">QBO cleanup, reimbursement workflows, monthly close.</div><button class="btn btn-outline btn-sm" style="margin-top:12px;width:100%;">View provider</button></div></div>
+          <div class="card"><div class="card-body"><div style="font-size:24px;margin-bottom:10px;">📈</div><div style="font-weight:700;font-size:14px;">Retirement Advisor</div><div style="font-size:12px;color:var(--slate);margin-top:4px;">Solo 401(k), SEP IRA, cash balance plans.</div><button class="btn btn-outline btn-sm" style="margin-top:12px;width:100%;">View provider</button></div></div>
+          <div class="card"><div class="card-body"><div style="font-size:24px;margin-bottom:10px;">⚖️</div><div style="font-weight:700;font-size:14px;">Business Attorney</div><div style="font-size:12px;color:var(--slate);margin-top:4px;">Board resolutions, operating agreements, entity docs.</div><button class="btn btn-outline btn-sm" style="margin-top:12px;width:100%;">View provider</button></div></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         SCREEN 6 — ADMIN / REVIEWER QUEUE
+    ══════════════════════════════════════════ -->
+    <div class="screen hidden-right" id="screen-6">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div>
+          <div style="font-size:20px;font-weight:700;">Review Queue</div>
+          <div style="font-size:13px;color:var(--slate);">LedgersUSA Admin Workspace · 4 cases awaiting review</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline btn-sm">Filter</button>
+          <button class="btn btn-fill btn-sm">Assign reviewer</button>
+        </div>
+      </div>
+
+      <!-- Queue stats -->
+      <div class="cols-4" style="margin-bottom:20px;">
+        <div class="stat"><div class="stat-value">8</div><div class="stat-label">Total in queue</div></div>
+        <div class="stat"><div class="stat-value" style="color:var(--amber);">4</div><div class="stat-label">Unassigned</div></div>
+        <div class="stat"><div class="stat-value" style="color:var(--blue);">3</div><div class="stat-label">Under review</div></div>
+        <div class="stat"><div class="stat-value" style="color:var(--emerald);">1</div><div class="stat-label">Ready to release</div></div>
+      </div>
+
+      <!-- Review table -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-body" style="padding:0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Entity</th>
+                <th>Income Band</th>
+                <th>Strategies</th>
+                <th>Paid Date</th>
+                <th>Assigned To</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#f0fdf4;">
+                <td><strong>Sarah Mitchell</strong><br/><span style="font-size:11px;color:var(--slate);">Core Plan · AZ</span></td>
+                <td>S-Corp</td>
+                <td>$300K+</td>
+                <td>5</td>
+                <td style="color:var(--slate);">Aug 12</td>
+                <td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar" style="width:24px;height:24px;font-size:10px;">JR</div><span style="font-size:13px;">J. Rivera</span></div></td>
+                <td><span class="badge badge-amber">Under Review</span></td>
+                <td><button class="btn btn-fill btn-sm" onclick="showReviewPanel()">Open →</button></td>
+              </tr>
+              <tr>
+                <td><strong>Marcus Thompson</strong><br/><span style="font-size:11px;color:var(--slate);">Core Plan · TX</span></td>
+                <td>LLC / S-Corp</td>
+                <td>$200K–$300K</td>
+                <td>4</td>
+                <td style="color:var(--slate);">Aug 14</td>
+                <td><span style="font-size:13px;color:var(--muted);">Unassigned</span></td>
+                <td><span class="badge badge-red">Unassigned</span></td>
+                <td><button class="btn btn-outline btn-sm">Assign</button></td>
+              </tr>
+              <tr>
+                <td><strong>Priya Desai</strong><br/><span style="font-size:11px;color:var(--slate);">Starter Plan · CA</span></td>
+                <td>Sole Prop</td>
+                <td>$100K–$200K</td>
+                <td>2</td>
+                <td style="color:var(--slate);">Aug 15</td>
+                <td><span style="font-size:13px;color:var(--muted);">Unassigned</span></td>
+                <td><span class="badge badge-red">Unassigned</span></td>
+                <td><button class="btn btn-outline btn-sm">Assign</button></td>
+              </tr>
+              <tr style="background:#f0fdf4;">
+                <td><strong>David Kim</strong><br/><span style="font-size:11px;color:var(--slate);">Core Plan · WA</span></td>
+                <td>Partnership</td>
+                <td>$400K+</td>
+                <td>6</td>
+                <td style="color:var(--slate);">Aug 10</td>
+                <td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar" style="width:24px;height:24px;font-size:10px;">AL</div><span style="font-size:13px;">A. Lee</span></div></td>
+                <td><span class="badge badge-emerald">Ready to Release</span></td>
+                <td><button class="btn btn-green btn-sm">Release plan →</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Review panel for Sarah Mitchell -->
+      <div id="review-panel" style="display:none;">
+        <div class="cols-1-2">
+          <!-- Client facts -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Client Facts — Sarah Mitchell</div><div class="card-sub">Intake v1.0 · Engine v1.0.0</div></div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:12px;">
+                <div><span style="color:var(--muted);">Entity</span><br/><strong>S-Corporation</strong></div>
+                <div><span style="color:var(--muted);">Revenue</span><br/><strong>$580,000</strong></div>
+                <div><span style="color:var(--muted);">Net income</span><br/><strong>$320,000</strong></div>
+                <div><span style="color:var(--muted);">Bracket</span><br/><strong>37%</strong></div>
+                <div><span style="color:var(--muted);">Employees</span><br/><strong>3</strong></div>
+                <div><span style="color:var(--muted);">State</span><br/><strong>Arizona</strong></div>
+              </div>
+              <div class="divider"></div>
+              <div class="section-label">Qualifiers</div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px;">
+                <span class="badge badge-emerald">Home office</span>
+                <span class="badge badge-emerald">Business vehicle</span>
+                <span class="badge badge-emerald">Home meetings</span>
+                <span class="badge badge-emerald">Real estate</span>
+              </div>
+              <div class="divider"></div>
+              <div class="section-label">Documents on file</div>
+              <div class="stack" style="gap:6px;">
+                <div class="task-row" style="padding:8px 10px;"><div class="task-num done" style="width:20px;height:20px;font-size:10px;">✓</div><div style="font-size:12px;">2023 Form 1120S</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strategy review -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Strategy Review</div><div class="card-sub">Approve, modify, or remove each preliminary strategy.</div></div>
+              <div class="card-body">
+                <div class="stack" style="gap:12px;">
+                  <div style="padding:12px;border-radius:10px;border:1px solid var(--border);">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+                      <div><div style="font-weight:600;font-size:13px;">Augusta Rule</div><div style="font-size:12px;color:var(--slate);">Est. $14,400–$28,000 · Score 92/100</div></div>
+                      <div style="display:flex;gap:6px;">
+                        <button class="btn btn-green btn-sm">Approve</button>
+                        <button class="btn btn-outline btn-sm">Modify</button>
+                        <button class="btn btn-sm" style="background:#fee2e2;color:#991b1b;border:none;">Remove</button>
+                      </div>
+                    </div>
+                    <div class="form-group"><label style="font-size:11px;">Reviewer notes</label><textarea style="min-height:52px;font-size:12px;" placeholder="Add assumption notes, caveats, or modifications..."></textarea></div>
+                  </div>
+                  <div style="padding:12px;border-radius:10px;border:1px solid var(--border);">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+                      <div><div style="font-weight:600;font-size:13px;">Accountable Plan</div><div style="font-size:12px;color:var(--slate);">Est. $8,200–$18,500 · Score 88/100</div></div>
+                      <div style="display:flex;gap:6px;">
+                        <button class="btn btn-green btn-sm">Approve</button>
+                        <button class="btn btn-outline btn-sm">Modify</button>
+                        <button class="btn btn-sm" style="background:#fee2e2;color:#991b1b;border:none;">Remove</button>
+                      </div>
+                    </div>
+                    <div class="form-group"><label style="font-size:11px;">Reviewer notes</label><textarea style="min-height:52px;font-size:12px;" placeholder="Add assumption notes, caveats, or modifications..."></textarea></div>
+                  </div>
+                  <div style="padding:12px;border-radius:10px;border:1px solid var(--border);">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+                      <div><div style="font-weight:600;font-size:13px;">Vehicle Strategy</div><div style="font-size:12px;color:var(--slate);">Est. $9,800–$22,000 · Score 81/100</div></div>
+                      <div style="display:flex;gap:6px;">
+                        <button class="btn btn-green btn-sm">Approve</button>
+                        <button class="btn btn-outline btn-sm">Modify</button>
+                        <button class="btn btn-sm" style="background:#fee2e2;color:#991b1b;border:none;">Remove</button>
+                      </div>
+                    </div>
+                    <div class="form-group"><label style="font-size:11px;">Reviewer notes</label><textarea style="min-height:52px;font-size:12px;" placeholder="Add assumption notes, caveats, or modifications..."></textarea></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-bar">
+              <div style="font-size:13px;color:var(--slate);">All strategies must be reviewed before release.</div>
+              <div style="display:flex;gap:10px;">
+                <button class="btn btn-outline">Request info from client</button>
+                <button class="btn btn-fill">Save draft</button>
+                <button class="btn btn-green">Approve &amp; release plan →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /viewport -->
+</div><!-- /chrome -->
+
+<script>
+  let current = 0;
+  const total = 7;
+
+  function goTo(idx) {
+    if (idx === current) return;
+    const dir = idx > current ? 1 : -1;
+    const screens = document.querySelectorAll('.screen');
+
+    // outgoing
+    screens[current].classList.remove('active');
+    screens[current].classList.add(dir > 0 ? 'hidden-left' : 'hidden-right');
+
+    // incoming
+    screens[idx].classList.remove('hidden-left', 'hidden-right');
+    screens[idx].classList.add('active');
+
+    current = idx;
+    updateFlowBar();
+    updateNavPills();
+  }
+
+  function updateFlowBar() {
+    for (let i = 0; i < total; i++) {
+      const el = document.getElementById('fs-' + i);
+      const dot = el.querySelector('.flow-dot');
+      el.classList.remove('active', 'done');
+      dot.classList.remove('active', 'done');
+      if (i < current) {
+        el.classList.add('done');
+        dot.textContent = '✓';
+      } else if (i === current) {
+        el.classList.add('active');
+        dot.textContent = i + 1;
+      } else {
+        dot.textContent = i + 1;
+      }
+    }
+  }
+
+  function updateNavPills() {
+    document.querySelectorAll('.nav-pill').forEach((p, i) => {
+      p.classList.toggle('active', i === current);
+    });
+  }
+
+  function toggleCheck(row) {
+    const box = row.querySelector('.check-box');
+    const isChecked = box.classList.contains('checked');
+    box.classList.toggle('checked', !isChecked);
+    box.textContent = isChecked ? '' : '✓';
+  }
+
+  let intakeStep = 2;
+  function setIntakeStep(step) {
+    // hide all panels
+    document.querySelectorAll('.intake-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('ip-' + step).classList.add('active');
+
+    // update dots
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById('sdot-' + i);
+      const line = document.getElementById('sline-' + i);
+      dot.classList.remove('active', 'done');
+      if (line) line.classList.remove('done');
+      if (i < step) { dot.classList.add('done'); dot.textContent = '✓'; if (line) line.classList.add('done'); }
+      else if (i === step) { dot.classList.add('active'); dot.textContent = i; }
+      else { dot.textContent = i; }
+    }
+
+    // progress
+    document.getElementById('intake-progress').style.width = ((step - 1) / 3 * 100) + '%';
+    intakeStep = step;
+  }
+
+  // portal tabs
+  function setPortalTab(name, el) {
+    ['dashboard','strategies','tasks','documents','experts'].forEach(t => {
+      document.getElementById('ptab-' + t).style.display = t === name ? '' : 'none';
+    });
+    document.querySelectorAll('#portal-tabs .tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function showReviewPanel() {
+    const panel = document.getElementById('review-panel');
+    panel.style.display = panel.style.display === 'none' ? '' : 'none';
+  }
+
+  // init
+  updateFlowBar();
+  updateNavPills();
+</script>
+</body>
+</html>
